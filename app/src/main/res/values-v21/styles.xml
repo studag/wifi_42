@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="wifi42" parent="android:Theme.DeviceDefault.Light">
+        <item name="android:colorAccent">@color/accent_device_default_light</item>
+    </style>
+</resources>
