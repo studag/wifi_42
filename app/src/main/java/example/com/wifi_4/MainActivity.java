@@ -20,8 +20,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private Switch wifiSwitch;
     private WifiManager wifiManager;
     private Button connectButton;
+    private Button widgetCreateButton;
     private RadioGroup predefinedRadioGroup;
     private RadioGroup availableRadioGroup;
     private List <WifiConfiguration> configuredNetworkList;
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,10 +51,24 @@ public class MainActivity extends AppCompatActivity {
         connectButton = findViewById(R.id.button_to_connect);
         connectButton.setEnabled(false);
 
+        widgetCreateButton = findViewById(R.id.button_to_make_widget);
+        widgetCreateButton.setEnabled(true);
+
+
         availableRadioGroup =  findViewById(R.id.availableRadioGroup);
 
         populateAvailableNetworksList();
         populateConfiguredNetworksList();
+
+        widgetCreateButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "To create a widget, please exit the app and press and hold on the main screen. Then click the widget button and select OneClick Wifi", Toast.LENGTH_LONG).show();
+            }
+        });
+
+
 
         connectButton.setOnClickListener(new View.OnClickListener() {
 
@@ -140,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
 
                 //startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
                 startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
+
+
                 // checkedId is the RadioButton selected
             }
         });
@@ -209,8 +224,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List <String> sNetworks_filtered = new ArrayList();
-        sNetworks_filtered = sortByAlphaAndRemoveBlanksAndDuplicates(unsorted_SSIDs);
-        //Collections.sort(unsorted_SSIDs);
+        sNetworks_filtered = MyWifiUtils.sortByAlphaAndRemoveBlanksAndDuplicates(unsorted_SSIDs);
 
         predefinedRadioGroup =  findViewById(R.id.predefinedRadioGroup);
 
@@ -268,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
 
         List <String> sAvail_filtered = new ArrayList();
         // Filter String List
-        sAvail_filtered = sortByAlphaAndRemoveBlanksAndDuplicates(sAvail_unfiltered);
+        sAvail_filtered = MyWifiUtils.sortByAlphaAndRemoveBlanksAndDuplicates(sAvail_unfiltered);
 
         for (String res : sAvail_filtered)
         {
@@ -281,28 +295,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static List<String> sortByAlphaAndRemoveBlanksAndDuplicates(List<String> listOfStrings)
-    {
-        listOfStrings.removeAll(Arrays.asList("")); // Remove blanks
 
-        for (int i=0; i <= listOfStrings.size() -1; i++)
-        {
-            if (!listOfStrings.get(i).matches(".*\\w.*")) // Remove whitespace only entries
-            {
-                listOfStrings.remove(i);
-            }
-        }
-
-        Set <String> removeDuplicates_set = new HashSet<>();
-        removeDuplicates_set.addAll(listOfStrings);
-
-        listOfStrings.clear();
-        listOfStrings.addAll(removeDuplicates_set);
-
-        Collections.sort(listOfStrings, String.CASE_INSENSITIVE_ORDER);   // sort in alphabetical order. CAPS don't matter
-
-        return listOfStrings;
-    }
 
 
 }
