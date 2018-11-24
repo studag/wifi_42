@@ -35,10 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private List <ScanResult> availableNetworkList;
     private static final String TAG_WIFI = "WIFI DEBUG";
 
-    public static void connectToWifi(String wifiMcWifiFace) {
-
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -17,6 +17,10 @@ import static android.content.Context.WIFI_SERVICE;
 public class MyWifiUtils {
 
 
+
+
+
+
     public static List<String> removeDoubleQuotesFromSSIDs(List<String> originalList)
     {
         MyWifiUtils.logList("DAGGERS: removeDoubleQuotesFromSSIDs: ", originalList);
