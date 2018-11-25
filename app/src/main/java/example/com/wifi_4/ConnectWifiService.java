@@ -41,6 +41,7 @@ public class ConnectWifiService extends Service {
 
         connectToWifi(_ssid);
 
+        stopSelf();
 
         return START_NOT_STICKY;
 
