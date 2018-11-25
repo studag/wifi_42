@@ -20,7 +20,7 @@
             android:text="@string/configure" />
 
         <EditText
-            android:id="@+id/appwidget_text"
+            android:id="@+id/appwidget_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />

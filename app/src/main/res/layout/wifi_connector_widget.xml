@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    android:id="@+id/appwidget_main_body"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#09C"
@@ -17,14 +18,14 @@
         android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
         android:textColor="#ffffff"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold|italic" />
 
-    <Button
-        android:id="@+id/appwidget_button"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Connect" />
+    <!--<Button-->
+        <!--android:id="@+id/appwidget_button"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:text="Connect" />-->
 
 
 </LinearLayout>

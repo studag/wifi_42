@@ -20,6 +20,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,15 @@ public class MainActivity extends AppCompatActivity {
     private List <ScanResult> availableNetworkList;
     private static final String TAG_WIFI = "WIFI DEBUG";
 
+    private static HashMap<Integer, WidgetWifiInformation> hmap = new HashMap<Integer, WidgetWifiInformation>();;
+
+    public static HashMap<Integer, WidgetWifiInformation> getHmap() {
+        return hmap;
+    }
+
+    public static void setHmap(HashMap<Integer, WidgetWifiInformation> hmap) {
+        MainActivity.hmap = hmap;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "To create a widget, please exit the app and press and hold on the main screen. Then click the widget button and select OneClick Wifi", Toast.LENGTH_LONG).show();
             }
         });
-
-
 
         connectButton.setOnClickListener(new View.OnClickListener() {
 
@@ -95,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
                 WifiManager wifiManager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
                 int netId = -1;
+
 
                 for (WifiConfiguration tmp : wifiManager.getConfiguredNetworks())
                     if (tmp.SSID.equals( "\""+ ssid +"\""))
@@ -207,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
     };
     private void populateConfiguredNetworksList()
     {
+
         configuredNetworkList =  wifiManager.getConfiguredNetworks();
 
         ArrayList<String> unsorted_SSIDs = new ArrayList<String>();

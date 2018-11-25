@@ -7,6 +7,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +20,29 @@ public class ConnectWifiService extends Service {
     private List<WifiConfiguration> configuredNetworkList;
 
     private static final String MY_TAG = "WIFI_SERVICE";
-    public ConnectWifiService() {
-
-    }
-
 
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        _ssid = intent.getStringExtra("ssid");
+
+        //_ssid = "bollox";//intent.getStringExtra("ssid");
+
+        int appId;
+        appId = intent.getIntExtra("appWidgetID",0);
+
+        //CharSequence widgetText = WifiConnectorWidgetConfigureActivity.loadTitlePref(getApplicationContext(), appId);
+
+        _ssid = WifiConnectorWidgetConfigureActivity.loadSSIDPref(getApplicationContext(),appId);
+
+        //_ssid = widgetText.toString();
+
+        Toast.makeText(this, "appId = " + appId + ", _ssid = " + _ssid, Toast.LENGTH_SHORT).show();
+
+
 
         connectToWifi(_ssid);
 
-        return START_STICKY;
+
+        return START_NOT_STICKY;
 
     }
     public void connectToWifi(String ssid)
@@ -51,12 +63,11 @@ public class ConnectWifiService extends Service {
 
                 netId = tmp.networkId;
                 wifiManager.enableNetwork(netId, true);
+                Toast.makeText(this, "Connecting to: "+ ssid, Toast.LENGTH_SHORT).show();
                 break;
             }
 
         List<String> ssidList = getSortedFilteredConfiguredNetworksSSIDs(configuredNetworkList);
-
-        //MyWifiUtils.logList(MY_TAG, ssidList);
 
 
     }

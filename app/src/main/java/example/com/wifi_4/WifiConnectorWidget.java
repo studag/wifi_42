@@ -5,13 +5,9 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.RemoteViews;
 
-/**
- * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link WifiConnectorWidgetConfigureActivity WifiConnectorWidgetConfigureActivity}
- */
 public class WifiConnectorWidget extends AppWidgetProvider {
 
     private static final String PREFS_NAME = "example.com.wifi_4.WifiConnectorWidget";
@@ -21,22 +17,25 @@ public class WifiConnectorWidget extends AppWidgetProvider {
                                 int appWidgetId) {
 
         CharSequence widgetText = WifiConnectorWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
-        // Construct the RemoteViews object
+
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.wifi_connector_widget);
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
         Intent intent = new Intent(context,ConnectWifiService.class);
 
+        //intent.putExtra("ssid", widgetText.toString());
+        intent.putExtra("appWidgetID", appWidgetId);
 
-        String pref_name = PREFS_NAME;
 
-        String ssid_string = loadTitlePref(context, appWidgetId);
+        Log.d("TAGGGGGGGG", widgetText.toString());
+        intent.setAction("dummy");
 
-        intent.putExtra("ssid", ssid_string);
+        PendingIntent pendingIntent = PendingIntent.getService(context, appWidgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
-        views.setOnClickPendingIntent(R.id.appwidget_button, pendingIntent);
+        //views.setOnClickPendingIntent(R.id.appwidget_button, pendingIntent);
+        //views.setOnClickPendingIntent(R.id.appwidget_text, pendingIntent);
+        views.setOnClickPendingIntent(R.id.appwidget_main_body, pendingIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -49,6 +48,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
 
             updateAppWidget(context, appWidgetManager, appWidgetId);
+            Log.d("TAGGGGGGGG", "Updating appWidgetId" + appWidgetId );
         }
     }
 
@@ -70,14 +70,6 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    static String loadTitlePref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        if (titleValue != null) {
-            return titleValue;
-        } else {
-            return context.getString(R.string.appwidget_text);
-        }
-    }
+
 }
 

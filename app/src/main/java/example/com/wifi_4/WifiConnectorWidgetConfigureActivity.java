@@ -9,6 +9,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -24,10 +25,19 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     private static final String PREFS_NAME = "example.com.wifi_4.WifiConnectorWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
 
+    private static final String SSID_PREFIX = "SSID_PREFIX";
+
+    private String _ssid;
+
     private WifiManager wifiManager;
     private List<WifiConfiguration> configuredNetworkList;
     private RadioGroup predefinedRadioGroup;
 
+    private String widgetTextEntered;
+    private String widgetSSIDClicked;
+    private Button addWidget;
+
+    int radioitemselected = -1;
 
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
@@ -37,15 +47,14 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             final Context context = WifiConnectorWidgetConfigureActivity.this;
 
             // When the button is clicked, store the string locally
-            String widgetText = mAppWidgetText.getText().toString();
+            widgetTextEntered = mAppWidgetText.getText().toString();
 
-            //////set SSID here
+            saveTitlePref(context, mAppWidgetId, widgetTextEntered);
 
-            //ssid = "LivingRoomMcLivingRoomFace-2";
-            /////////////////////
+            RadioButton rb = predefinedRadioGroup.findViewById(radioitemselected);
+            widgetSSIDClicked = (String) rb.getText();
 
-
-            saveTitlePref(context, mAppWidgetId, widgetText);
+            saveSSIDPref(context, mAppWidgetId, widgetSSIDClicked);
 
 
             // It is the responsibility of the configuration activity to update the app widget
@@ -55,6 +64,8 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             // Make sure we pass back the original appWidgetId
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            resultValue.putExtra(SSID_PREFIX,_ssid);
+
             setResult(RESULT_OK, resultValue);
             finish();
         }
@@ -67,9 +78,14 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     }
 
 //     Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, String text) {
+    static void saveTitlePref(Context context, int appWidgetId, String title) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
+        prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_title", title);
+        prefs.apply();
+    }
+    static void saveSSIDPref(Context context, int appWidgetId, String ssid) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_ssid", ssid);
         prefs.apply();
     }
 
@@ -79,11 +95,21 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     // If there is no preference saved, get the default from a resource
     static String loadTitlePref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
+        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_title", null);
         if (titleValue != null) {
             return titleValue;
         } else {
-            return context.getString(R.string.appwidget_text);
+            return context.getString(R.string.appwidget_text_title);
+        }
+    }
+
+    static String loadSSIDPref(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        String ssidValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId + "_ssid", null);
+        if (ssidValue != null) {
+            return ssidValue;
+        } else {
+            return context.getString(R.string.appwidget_text_ssid);
         }
     }
 
@@ -97,6 +123,9 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.wifi_connector_widget_configure);
+
+        addWidget = findViewById(R.id.add_button);
+        addWidget.setEnabled(false);
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
@@ -114,6 +143,8 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
                 unsorted_SSIDs.add(ssid_to_add_to_list);
             }
         }
+
+
 
         List <String> sNetworks_filtered;
         sNetworks_filtered = MyWifiUtils.sortByAlphaAndRemoveBlanksAndDuplicates(unsorted_SSIDs);
@@ -138,7 +169,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         setResult(RESULT_CANCELED);
 
 
-        mAppWidgetText = (EditText) findViewById(R.id.appwidget_text);
+        mAppWidgetText = (EditText) findViewById(R.id.appwidget_edittext);
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
         // Find the widget id from the intent.
@@ -155,14 +186,19 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             return;
         }
 
-        mAppWidgetText.setText(loadTitlePref(WifiConnectorWidgetConfigureActivity.this, mAppWidgetId));
+        String wighetTitle = "Default";
+
+        wighetTitle = loadTitlePref(WifiConnectorWidgetConfigureActivity.this, mAppWidgetId);
+
+        //String substr = wighetTitle.substring(0,4);
+        mAppWidgetText.setText(wighetTitle);
 
 
         predefinedRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-                int radioitemselected = predefinedRadioGroup.getCheckedRadioButtonId();
+                radioitemselected = predefinedRadioGroup.getCheckedRadioButtonId();
 
                 if(group.getCheckedRadioButtonId() == -1)
                 {
@@ -173,7 +209,11 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
 
                     String rb_ssid = (String) rb.getText();
 
+                    _ssid = rb_ssid;
+
                     mAppWidgetText.setText(rb_ssid);
+
+                    addWidget.setEnabled(true);
                 }
 
             }
@@ -181,10 +221,5 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
 
     }
 
-    private void populateRadioGroupWithConfiguredNetworks()
-    {
-
-
-    }
 }
 
