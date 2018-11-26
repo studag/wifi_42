@@ -3,7 +3,8 @@
     <string name="appwidget_text">ONE-CLICK</string>
     <string name="connect_appwidget_text">Connect</string>
     <string name="add_widget">Add widget</string>
-    <string name="configure">Configure</string>
+    <string name="wifi_widget_label">Widget-Label</string>
+    <string name="ssid_label">Network SSID</string>
     <string name="PREFS_NAME">example.com.wifi_4.WifiConnectorWidget</string>
     <string name="appwidget_text_title">Select a WiFi to Continue</string>
     <string name="appwidget_text_ssid">ONE-CLICK-SSID</string>

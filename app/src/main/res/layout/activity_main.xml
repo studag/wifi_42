@@ -60,62 +60,62 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
         </GridLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Available Wi-FI Networks" />
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Available Wi-FI Networks" />-->
 
     </LinearLayout>
 
 
-    <ScrollView
-        android:id="@+id/availableScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/layoutSeparator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.13"
-        android:scrollbarFadeDuration="0">
+    <!--<ScrollView-->
+        <!--android:id="@+id/availableScrollView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="110dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginLeft="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="@+id/layoutSeparator"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.0"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/linearLayout"-->
+        <!--app:layout_constraintVertical_bias="0.13"-->
+        <!--android:scrollbarFadeDuration="0">-->
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical">-->
 
 
-            <RadioGroup
-                android:id="@+id/availableRadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
+            <!--<RadioGroup-->
+                <!--android:id="@+id/availableRadioGroup"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginStart="8dp"-->
+                <!--android:layout_marginLeft="8dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:layout_marginEnd="8dp"-->
+                <!--android:layout_marginRight="8dp"-->
+                <!--android:layout_marginBottom="8dp"-->
 
-                app:layout_constraintVertical_bias="0.23">
+                <!--app:layout_constraintVertical_bias="0.23">-->
 
-            </RadioGroup>
+            <!--</RadioGroup>-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
 
-    </ScrollView>
+    <!--</ScrollView>-->
 
     <LinearLayout
         android:id="@+id/layoutSeparator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/availableScrollView">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
         <TextView
             android:layout_width="match_parent"

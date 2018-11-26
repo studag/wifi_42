@@ -41,13 +41,15 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
 
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    EditText mAppWidgetText;
+    EditText mAppWidgetText_label;
+    EditText mAppWidgetText_ssid;
+
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             final Context context = WifiConnectorWidgetConfigureActivity.this;
 
             // When the button is clicked, store the string locally
-            widgetTextEntered = mAppWidgetText.getText().toString();
+            widgetTextEntered = mAppWidgetText_label.getText().toString();
 
             saveTitlePref(context, mAppWidgetId, widgetTextEntered);
 
@@ -169,7 +171,16 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         setResult(RESULT_CANCELED);
 
 
-        mAppWidgetText = (EditText) findViewById(R.id.appwidget_edittext);
+        mAppWidgetText_label    = (EditText) findViewById(R.id.appwidget_edittext_widget_title);
+
+        mAppWidgetText_ssid     = (EditText) findViewById(R.id.appwidget_edittext_ssid_label);
+
+        // Purely read only and greyed out
+        mAppWidgetText_ssid.setEnabled(false);
+        mAppWidgetText_ssid.setFocusable(false);
+        mAppWidgetText_ssid.setFocusableInTouchMode(false);
+        mAppWidgetText_ssid.setClickable(false);
+
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
         // Find the widget id from the intent.
@@ -186,12 +197,11 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             return;
         }
 
-        String wighetTitle = "Default";
+//        String wighetTitle = loadTitlePref(WifiConnectorWidgetConfigureActivity.this, mAppWidgetId);
 
-        wighetTitle = loadTitlePref(WifiConnectorWidgetConfigureActivity.this, mAppWidgetId);
 
-        //String substr = wighetTitle.substring(0,4);
-        mAppWidgetText.setText(wighetTitle);
+        mAppWidgetText_label.setText(loadTitlePref(WifiConnectorWidgetConfigureActivity.this, mAppWidgetId));
+        mAppWidgetText_ssid.setText("Network SSID selected");
 
 
         predefinedRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
@@ -211,7 +221,8 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
 
                     _ssid = rb_ssid;
 
-                    mAppWidgetText.setText(rb_ssid);
+                    mAppWidgetText_label.setText(rb_ssid);
+                    mAppWidgetText_ssid.setText(rb_ssid);
 
                     addWidget.setEnabled(true);
                 }

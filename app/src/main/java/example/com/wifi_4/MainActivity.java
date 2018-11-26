@@ -1,5 +1,9 @@
 package example.com.wifi_4;
 
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProvider;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private Button connectButton;
     private Button widgetCreateButton;
     private RadioGroup predefinedRadioGroup;
-    private RadioGroup availableRadioGroup;
+    //private RadioGroup availableRadioGroup;
     private List <WifiConfiguration> configuredNetworkList;
     private List <ScanResult> availableNetworkList;
     private static final String TAG_WIFI = "WIFI DEBUG";
@@ -60,10 +64,13 @@ public class MainActivity extends AppCompatActivity {
         widgetCreateButton = findViewById(R.id.button_to_make_widget);
         widgetCreateButton.setEnabled(true);
 
+        final int REQUEST_PICK_APPWIDGET = 9;
 
-        availableRadioGroup =  findViewById(R.id.availableRadioGroup);
+        //availableRadioGroup =  findViewById(R.id.availableRadioGroup);
 
-        populateAvailableNetworksList();
+       // populateAvailableNetworksList();
+        availableNetworkList = wifiManager.getScanResults();
+
         populateConfiguredNetworksList();
 
         widgetCreateButton.setOnClickListener(new View.OnClickListener() {
@@ -71,8 +78,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "To create a widget, please exit the app and press and hold on the main screen. Then click the widget button and select OneClick Wifi", Toast.LENGTH_LONG).show();
+
+                //startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
+                Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
+
+                pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+
+                String RESULT = "";
+
+                AppWidgetProviderInfo ap;
+
+                startActivityForResult(pickIntent,REQUEST_PICK_APPWIDGET);
+
+                Toast.makeText(MainActivity.this, "Does nothing yet = " + RESULT, Toast.LENGTH_LONG).show();
+                //
+                //
+                //todo Add functionality onclick listener for Create widget button, to actually launch a WifiCongigWidget activity and creata a widget
+                //
+                //
+
             }
         });
+
+
+
 
         connectButton.setOnClickListener(new View.OnClickListener() {
 
@@ -151,18 +180,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        availableRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                //startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
-                startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
-
-
-                // checkedId is the RadioButton selected
-            }
-        });
+//        availableRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+//        {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//
+//                //startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
+//                startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
+//
+//
+//                // checkedId is the RadioButton selected
+//            }
+//        });
 
     }
 
@@ -189,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     wifiSwitch.setChecked(true);
                     wifiSwitch.setText("WiFi is ON");
 
-                    populateAvailableNetworksList();
+                    //populateAvailableNetworksList();
 
                     if (predefinedRadioGroup.getCheckedRadioButtonId() == -1)
                     {
@@ -200,9 +229,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case WifiManager.WIFI_STATE_DISABLED:
 
-                    for (int i = 0; i < availableRadioGroup.getChildCount(); i++) {
-                        availableRadioGroup.getChildAt(i).setEnabled(false);
-                    }
+//                    for (int i = 0; i < availableRadioGroup.getChildCount(); i++) {
+//                        availableRadioGroup.getChildAt(i).setEnabled(false);
+//                    }
 
                     //availableRadioGroup.clearCheck(); // causes onchanges receiver broadcast
                     availableNetworkList.clear();
@@ -229,8 +258,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        List <String> sNetworks_filtered = new ArrayList();
-        sNetworks_filtered = MyWifiUtils.sortByAlphaAndRemoveBlanksAndDuplicates(unsorted_SSIDs);
+        List <String> sNetworks_filtered = MyWifiUtils.sortByAlphaAndRemoveBlanksAndDuplicates(unsorted_SSIDs);
 
         predefinedRadioGroup =  findViewById(R.id.predefinedRadioGroup);
 
@@ -267,39 +295,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void populateAvailableNetworksList()
-    {
-        availableNetworkList = wifiManager.getScanResults();
-
-        Set<ScanResult> hs = new HashSet<>();// remove duplicates. In case of multiple channel wifis etc
-//        hs.addAll(availableNetworkList); // remove duplicates
-//        availableNetworkList.clear();// remove duplicates
-//        availableNetworkList.addAll(hs);// remove duplicates
-//        availableNetworkList.removeAll(Arrays.asList("", null)); // remove blank strings ie. hidden SSIDs
+//    private void populateAvailableNetworksList()
+//    {
+//        availableNetworkList = wifiManager.getScanResults();
 //
-        availableRadioGroup.removeAllViews();
+//        availableRadioGroup.removeAllViews();
+//
+//        List <String> sAvail_unfiltered = new ArrayList();
+//
+//        // Populate String List
+//        for (ScanResult res : availableNetworkList) {
+//            sAvail_unfiltered.add(res.SSID);
+//        }
+//
+//        List <String> sAvail_filtered = new ArrayList();
+//        // Filter String List
+//        sAvail_filtered = MyWifiUtils.sortByAlphaAndRemoveBlanksAndDuplicates(sAvail_unfiltered);
+//
+//        for (String res : sAvail_filtered)
+//        {
+//            Log.d(TAG_WIFI, res);
+//
+//            RadioButton rb = new RadioButton(getApplicationContext());
+//            rb.setText(res);
+//            availableRadioGroup.addView(rb);
+//
+//        }
+//    }
 
-        List <String> sAvail_unfiltered = new ArrayList();
 
-        // Populate String List
-        for (ScanResult res : availableNetworkList) {
-            sAvail_unfiltered.add(res.SSID);
-        }
-
-        List <String> sAvail_filtered = new ArrayList();
-        // Filter String List
-        sAvail_filtered = MyWifiUtils.sortByAlphaAndRemoveBlanksAndDuplicates(sAvail_unfiltered);
-
-        for (String res : sAvail_filtered)
-        {
-            Log.d(TAG_WIFI, res);
-
-            RadioButton rb = new RadioButton(getApplicationContext());
-            rb.setText(res);
-            availableRadioGroup.addView(rb);
-
-        }
-    }
 
 
 

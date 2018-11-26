@@ -17,10 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="@string/configure" />
+            android:text="@string/wifi_widget_label" />
 
         <EditText
-            android:id="@+id/appwidget_edittext"
+            android:id="@+id/appwidget_edittext_widget_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/appwidget_edittext_ssid_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
