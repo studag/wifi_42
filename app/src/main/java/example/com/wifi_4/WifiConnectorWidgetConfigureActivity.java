@@ -5,14 +5,21 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
+import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +42,63 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
 
     private String widgetTextEntered;
     private String widgetSSIDClicked;
-    private Button addWidget;
+    private Button addWidgetButton;
+    private Button colorPickerButton;
 
     int radioitemselected = -1;
 
+    private static ColorPicker cp;
+    private static int widget_main_color;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     EditText mAppWidgetText_label;
     EditText mAppWidgetText_ssid;
+
+    View.OnClickListener mColorOnClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            final Context context = WifiConnectorWidgetConfigureActivity.this;
+
+            cp = new ColorPicker(WifiConnectorWidgetConfigureActivity.this);
+            /* Show color picker dialog */
+
+            cp.setColor(widget_main_color);
+            cp.show();
+
+            cp.enableAutoClose(); // Enable auto-dismiss for the dialog
+
+            /* Set a new Listener called when user click "select" */
+            cp.setCallback(new ColorPickerCallback() {
+                @Override
+                public void onColorChosen(@ColorInt int color) {
+                    // Do whatever you want
+                    widget_main_color = color;
+                    Toast.makeText(context, "widget_main_color: " + widget_main_color, Toast.LENGTH_SHORT).show();
+                    // Examples
+
+                    colorPickerButton.setBackgroundColor(color);
+
+                    Log.d("Alpha", Integer.toString(Color.alpha(color)));
+                    Log.d("Red", Integer.toString(Color.red(color)));
+                    Log.d("Green", Integer.toString(Color.green(color)));
+                    Log.d("Blue", Integer.toString(Color.blue(color)));
+
+                    Log.d("Pure Hex", Integer.toHexString(color));
+                    Log.d("#Hex no alpha", String.format("#%06X", (0xFFFFFF & color)));
+                    Log.d("#Hex with alpha", String.format("#%08X", (0xFFFFFFFF & color)));
+
+
+                    saveWidgetColorPref(context,color);
+                    // If the auto-dismiss option is not enable (disabled as default) you have to manually dimiss the dialog
+                    // cp.dismiss();
+                }
+
+
+            });
+
+            Toast.makeText(context, "...now here ...", Toast.LENGTH_SHORT).show();
+
+        }
+    };
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
@@ -57,7 +113,6 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             widgetSSIDClicked = (String) rb.getText();
 
             saveSSIDPref(context, mAppWidgetId, widgetSSIDClicked);
-
 
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -90,6 +145,11 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_ssid", ssid);
         prefs.apply();
     }
+    static void saveWidgetColorPref(Context context, Integer color) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putInt(PREF_PREFIX_KEY + "_widget_main_color", color);
+        prefs.apply();
+    }
 
 
 
@@ -115,19 +175,37 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         }
     }
 
-    static void deleteTitlePref(Context context, int appWidgetId) {
+    static Integer loadColorPref(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        Integer colorValue = prefs.getInt(PREF_PREFIX_KEY  +  "_widget_main_color",  1);
+        if (colorValue != null) {
+            return colorValue;
+        } else {
+            return Color.CYAN;
+        }
+    }
+
+    static void deletePrefs(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.apply();
     }
+
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.wifi_connector_widget_configure);
 
-        addWidget = findViewById(R.id.add_button);
-        addWidget.setEnabled(false);
+        addWidgetButton = findViewById(R.id.add_button);
+        colorPickerButton = findViewById(R.id.modify_color);
+
+
+        widget_main_color = loadColorPref(getApplicationContext());
+        colorPickerButton.setBackgroundColor(widget_main_color);
+
+
+        addWidgetButton.setEnabled(false);
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
@@ -166,6 +244,9 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             }
         }
 
+
+
+
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
@@ -182,6 +263,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         mAppWidgetText_ssid.setClickable(false);
 
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
+        findViewById(R.id.modify_color).setOnClickListener(mColorOnClickListener);
 
         // Find the widget id from the intent.
         Intent intent = getIntent();
@@ -224,7 +306,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
                     mAppWidgetText_label.setText(rb_ssid);
                     mAppWidgetText_ssid.setText(rb_ssid);
 
-                    addWidget.setEnabled(true);
+                    addWidgetButton.setEnabled(true);
                 }
 
             }

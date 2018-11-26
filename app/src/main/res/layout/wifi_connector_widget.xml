@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:background="#09C"
     android:padding="@dimen/widget_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:alpha="0.9">
 
     <TextView
         android:id="@+id/appwidget_text"
@@ -19,7 +20,8 @@
         android:text="@string/appwidget_text"
         android:textColor="#ffffff"
         android:textSize="20sp"
-        android:textStyle="bold|italic" />
+        android:textStyle="bold|italic"
+        android:alpha="0.9"/>
 
     <!--<Button-->
         <!--android:id="@+id/appwidget_button"-->

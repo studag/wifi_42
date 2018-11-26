@@ -35,6 +35,12 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.wifi_connector_widget);
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
+
+        int color = WifiConnectorWidgetConfigureActivity.loadColorPref(context);
+
+        views.setInt(R.id.appwidget_main_body, "setBackgroundColor", color);
+        views.setInt(R.id.appwidget_text, "setBackgroundColor", color);
+
         Intent intent = new Intent(context, WifiConnectorWidget.class);
 //        Intent intent = new Intent(context,ConnectWifiService.class);
 
@@ -71,7 +77,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
         for (int appWidgetId : appWidgetIds) {
-            WifiConnectorWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
+            WifiConnectorWidgetConfigureActivity.deletePrefs(context, appWidgetId);
         }
     }
 

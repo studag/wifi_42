@@ -8,5 +8,6 @@
     <string name="PREFS_NAME">example.com.wifi_4.WifiConnectorWidget</string>
     <string name="appwidget_text_title">Select a WiFi to Continue</string>
     <string name="appwidget_text_ssid">ONE-CLICK-SSID</string>
+    <string name="modify_color">Widget Colour</string>
 
 </resources>

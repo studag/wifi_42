@@ -19,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".ConnectWifi" />
 
         <service
@@ -30,12 +29,11 @@
         <receiver android:name=".WifiConnectorWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
-                <action android:name="WifiManager.NETWORK_IDS_CHANGED_ACTION"/>
-                <action android:name="WifiManager.NETWORK_STATE_CHANGED_ACTION"/>
-                <action android:name="android.net.wifi.STATE_CHANGE"/>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="WifiManager.NETWORK_IDS_CHANGED_ACTION" />
+                <action android:name="WifiManager.NETWORK_STATE_CHANGED_ACTION" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-
             </intent-filter>
 
             <meta-data
@@ -43,12 +41,14 @@
                 android:resource="@xml/wifi_connector_widget_info" />
         </receiver>
 
-        <activity android:name=".WifiConnectorWidgetConfigureActivity"
+        <activity
+            android:name=".WifiConnectorWidgetConfigureActivity"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+        <activity android:name=".test"></activity>
     </application>
 
 </manifest>

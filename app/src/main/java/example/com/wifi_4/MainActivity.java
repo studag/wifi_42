@@ -1,8 +1,6 @@
 package example.com.wifi_4;
 
-import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,9 +23,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private Switch wifiSwitch;
@@ -40,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private List <ScanResult> availableNetworkList;
     private static final String TAG_WIFI = "WIFI DEBUG";
 
+
     private static HashMap<Integer, WidgetWifiInformation> hmap = new HashMap<Integer, WidgetWifiInformation>();;
 
     public static HashMap<Integer, WidgetWifiInformation> getHmap() {
@@ -49,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     public static void setHmap(HashMap<Integer, WidgetWifiInformation> hmap) {
         MainActivity.hmap = hmap;
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "To create a widget, please exit the app and press and hold on the main screen. Then click the widget button and select OneClick Wifi", Toast.LENGTH_LONG).show();
+
 
                 //startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
                 Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
