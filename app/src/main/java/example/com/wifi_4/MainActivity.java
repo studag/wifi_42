@@ -37,15 +37,15 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_WIFI = "WIFI DEBUG";
 
 
-    private static HashMap<Integer, WidgetWifiInformation> hmap = new HashMap<Integer, WidgetWifiInformation>();;
+    //private static HashMap<Integer, WidgetWifiInformation> hmap = new HashMap<Integer, WidgetWifiInformation>();;
 
-    public static HashMap<Integer, WidgetWifiInformation> getHmap() {
-        return hmap;
-    }
+    //public static HashMap<Integer, WidgetWifiInformation> getHmap() {
+//        return hmap;
+//    }
 
-    public static void setHmap(HashMap<Integer, WidgetWifiInformation> hmap) {
-        MainActivity.hmap = hmap;
-    }
+    //public static void setHmap(HashMap<Integer, WidgetWifiInformation> hmap) {
+    //    MainActivity.hmap = hmap;
+    //}
 
 
 
