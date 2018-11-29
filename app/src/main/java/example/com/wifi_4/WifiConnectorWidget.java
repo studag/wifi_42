@@ -11,7 +11,6 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
 
-        int color = WifiConnectorWidgetConfigureActivity.loadColorPref(context);
+        int color = WifiConnectorWidgetConfigureActivity.loadColorPref(context);//todo. chnage this for individual appIds. currently just loads all one color. Have separate DEFAULT color preference
 
         views.setInt(R.id.appwidget_main_body, "setBackgroundColor", color);
         views.setInt(R.id.appwidget_text, "setBackgroundColor", color);
@@ -95,6 +94,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         context.getApplicationContext().registerReceiver(wifiStateReceiver, filters);
         Toast.makeText(context, "Receiver Registered", Toast.LENGTH_SHORT).show();
 
+        WifiConnectorWidgetConfigureActivity.saveWidgetColorPref(context,WifiConnectorWidgetConfigureActivity.getDefaultWidgetColor());
     }
 
     @Override

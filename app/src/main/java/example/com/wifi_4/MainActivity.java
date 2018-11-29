@@ -22,7 +22,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -98,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
                 //
 
             }
+
+
         });
 
 

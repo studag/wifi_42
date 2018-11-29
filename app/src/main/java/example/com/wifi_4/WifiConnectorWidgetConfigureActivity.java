@@ -33,6 +33,9 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     private static final String PREF_PREFIX_KEY = "appwidget_";
 
     private static final String SSID_PREFIX = "SSID_PREFIX";
+    private static final String DEFAULT_COLOR_WIDGET_STRING_HEX = "#4EA651";
+
+    private static  int DEFAULT_COLOR_WIDGET ;
 
     private String _ssid;
 
@@ -87,7 +90,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
                     Log.d("#Hex with alpha", String.format("#%08X", (0xFFFFFFFF & color)));
 
 
-                    saveWidgetColorPref(context,color);
+                    //saveWidgetColorPref(context,color);
                     // If the auto-dismiss option is not enable (disabled as default) you have to manually dimiss the dialog
                     // cp.dismiss();
                 }
@@ -107,6 +110,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             // When the button is clicked, store the string locally
             widgetTextEntered = mAppWidgetText_label.getText().toString();
 
+            saveWidgetColorPref(context,widget_main_color);
             saveTitlePref(context, mAppWidgetId, widgetTextEntered);
 
             RadioButton rb = predefinedRadioGroup.findViewById(radioitemselected);
@@ -177,12 +181,16 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
 
     static Integer loadColorPref(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        Integer colorValue = prefs.getInt(PREF_PREFIX_KEY  +  "_widget_main_color",  1);
-        if (colorValue != null) {
+
+        Log.d("COLORS", "DEFAULT_COLOR_WIDGET: " + DEFAULT_COLOR_WIDGET);
+        int colorValue = prefs.getInt(PREF_PREFIX_KEY  +  "_widget_main_color",  DEFAULT_COLOR_WIDGET);
+
+
+        if (colorValue != 0)
             return colorValue;
-        } else {
-            return Color.CYAN;
-        }
+        else
+
+            return DEFAULT_COLOR_WIDGET;
     }
 
     static void deletePrefs(Context context, int appWidgetId) {
@@ -191,17 +199,26 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         prefs.apply();
     }
 
+    public static Integer getDefaultWidgetColor() {
+        return DEFAULT_COLOR_WIDGET;
+    }
+
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.wifi_connector_widget_configure);
 
+        DEFAULT_COLOR_WIDGET = Color.parseColor(DEFAULT_COLOR_WIDGET_STRING_HEX);
+
         addWidgetButton = findViewById(R.id.add_button);
         colorPickerButton = findViewById(R.id.modify_color);
 
 
         widget_main_color = loadColorPref(getApplicationContext());
+
+
+        //widget_main_color = 28416;
         colorPickerButton.setBackgroundColor(widget_main_color);
 
 
