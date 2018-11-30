@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -19,6 +20,8 @@ import java.util.List;
 public class WifiConnectorWidget extends AppWidgetProvider {
 
     private static String WIDGET_CLICKED_ACTION = "wifiaction";
+
+    private static int enabledSSIDWidget = 0;
 
     String _ssid;
 
@@ -38,9 +41,16 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         int color = WifiConnectorWidgetConfigureActivity.loadColorPref(context);//todo. chnage this for individual appIds. currently just loads all one color. Have separate DEFAULT color preference
 
-        views.setInt(R.id.appwidget_main_body, "setBackgroundColor", color);
-        views.setInt(R.id.appwidget_text, "setBackgroundColor", color);
-
+        if (appWidgetId == enabledSSIDWidget) // the app with matching wifiSSID
+        {
+            views.setInt(R.id.appwidget_main_body, "setBackgroundColor", Color.RED);
+            views.setInt(R.id.appwidget_text, "setBackgroundColor", Color.BLUE);
+        }
+        else
+        {
+            views.setInt(R.id.appwidget_main_body, "setBackgroundColor", color);
+            views.setInt(R.id.appwidget_text, "setBackgroundColor", color);
+        }
         Intent intent = new Intent(context, WifiConnectorWidget.class);
 //        Intent intent = new Intent(context,ConnectWifiService.class);
 
@@ -90,6 +100,8 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         filters.addAction("android.net.wifi.STATE_CHANGE");
         filters.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
         filters.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filters.addAction(WifiManager.EXTRA_WIFI_STATE);
 
         context.getApplicationContext().registerReceiver(wifiStateReceiver, filters);
         Toast.makeText(context, "Receiver Registered", Toast.LENGTH_SHORT).show();
@@ -143,7 +155,6 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         }
 
-
         if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
             // save the connected state to get in onUpdate
 
@@ -151,10 +162,6 @@ public class WifiConnectorWidget extends AppWidgetProvider {
             Toast.makeText(context, "Change State of Wifi", Toast.LENGTH_SHORT).show();
 
         }
-
-
-
-
 }
 
 
@@ -184,31 +191,21 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     private BroadcastReceiver wifiStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int wifiStateExtra = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
+            int wifiStateExtra = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_ENABLING);
 
-            if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION))
-            {
-               // Toast.makeText(context, "NETWORK_STATE_CHANGED_ACTION", Toast.LENGTH_SHORT).show();
-            }
-            else if (intent.getAction().equals(WifiManager.NETWORK_IDS_CHANGED_ACTION))
-            {
-                Toast.makeText(context, "NETWORK_IDS_CHANGED_ACTION", Toast.LENGTH_SHORT).show();
-            }
-
-            final String action = intent.getAction();
-            if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
-                Toast.makeText(context, "SUPPLICANT_CONNECTION_CHANGE_ACTION", Toast.LENGTH_SHORT).show();
-            }
-
+            // todo Get list of widget SSIDs from prefs
+            // todo Compare to the actual current SSID
+            // todo set enabledSSIDWidget to correspond to a matching case
 
             switch (wifiStateExtra) {
+                case WifiManager.WIFI_STATE_ENABLING:
+                //    Toast.makeText(context, "Wifi Enabling", Toast.LENGTH_SHORT).show();
+                    break;
                 case WifiManager.WIFI_STATE_ENABLED:
                     Toast.makeText(context, "Wifi Enabled", Toast.LENGTH_SHORT).show();
-
                     break;
                 case WifiManager.WIFI_STATE_DISABLED:
                     Toast.makeText(context, "Wifi disabled", Toast.LENGTH_SHORT).show();
-
                     break;
             }
 

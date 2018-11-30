@@ -33,7 +33,9 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     private static final String PREF_PREFIX_KEY = "appwidget_";
 
     private static final String SSID_PREFIX = "SSID_PREFIX";
-    private static final String DEFAULT_COLOR_WIDGET_STRING_HEX = "#4EA651";
+    //private static final String DEFAULT_COLOR_WIDGET_STRING_HEX = "#4EA651";
+    private static String DEFAULT_COLOR_WIDGET_STRING_HEX ;
+
 
     private static  int DEFAULT_COLOR_WIDGET ;
 
@@ -179,6 +181,17 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         }
     }
 
+    static List<String> loadSSIDPrefs(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        List <String> ssidValues = (List<String>) prefs.getStringSet(PREF_PREFIX_KEY + "_ssid", null);
+        if (ssidValues != null) {
+            return ssidValues;
+        } else {
+            return null;
+        }
+    }
+
+
     static Integer loadColorPref(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
 
@@ -208,6 +221,8 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.wifi_connector_widget_configure);
+
+        DEFAULT_COLOR_WIDGET_STRING_HEX = getString(R.string.widget_default_hex_green);
 
         DEFAULT_COLOR_WIDGET = Color.parseColor(DEFAULT_COLOR_WIDGET_STRING_HEX);
 
