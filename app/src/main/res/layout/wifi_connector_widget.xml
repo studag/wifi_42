@@ -64,3 +64,6 @@
 
 
 </LinearLayout>
+
+
+    <!--android:background="@drawable/layout_bg_widget"todo this can go back in if I can work out shapes and drawables-->

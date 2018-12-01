@@ -20,35 +20,21 @@ public class MyWifiUtils {
 
     public static boolean isWifiSSIDConnected(Context context, WifiManager wifiManager ,String ssid)
     {
-
-        //WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo ();
 
-        //String current_connected_SSID  = info.getSSID();
         String current_connected_SSID  = WifiConnectorWidget.getSsidConnectedNow();
 
-        if(!wifiManager.isWifiEnabled())
-        {
+        if(!wifiManager.isWifiEnabled()) {
             WifiConnectorWidget.setSsidConnectedNow("");
             return false;
         }
-
-//            wifiManager.setWifiEnabled(true);
-//
-//        netId = tmp.networkId;
-//        wifiManager.enableNetwork(netId, true);
-//        break;
-
-
 
         if (current_connected_SSID.equals( "\""+ ssid +"\""))
             return true;
         else
             return false;
     }
-
 
 
 
