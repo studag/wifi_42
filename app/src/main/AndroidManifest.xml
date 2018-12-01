@@ -19,12 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ConnectWifi" />
-
-        <service
-            android:name=".ConnectWifiService"
-            android:enabled="true"
-            android:exported="true" />
 
         <receiver android:name=".WifiConnectorWidget">
             <intent-filter>

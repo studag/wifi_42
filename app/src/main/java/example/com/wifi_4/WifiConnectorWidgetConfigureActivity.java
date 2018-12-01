@@ -37,6 +37,9 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     private static String DEFAULT_COLOR_WIDGET_STRING_HEX ;
 
 
+
+
+
     private static  int DEFAULT_COLOR_WIDGET ;
 
     private String _ssid;
@@ -130,6 +133,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             resultValue.putExtra(SSID_PREFIX,_ssid);
 
             setResult(RESULT_OK, resultValue);
+
             finish();
         }
     };
