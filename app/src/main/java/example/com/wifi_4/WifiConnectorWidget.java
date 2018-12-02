@@ -230,7 +230,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         context.getApplicationContext().registerReceiver(wifiStateReceiver, filters);
 
-        Toast.makeText(context, "Receiver Registered", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Receiver Registered", Toast.LENGTH_SHORT).show();
 
         //WifiConnectorWidgetConfigureActivity.saveWidgetColorPref(context,WifiConnectorWidgetConfigureActivity.getDefaultWidgetColor());
     }
@@ -279,8 +279,8 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
                     wifiManager.enableNetwork(netId, true);
 
-                    Toast.makeText(context, _ssid + "\nappID=" + appId, Toast.LENGTH_SHORT).show();
-
+                    //Toast.makeText(context, _ssid + "\nappID=" + appId, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Connecting to:\n"+ _ssid, Toast.LENGTH_SHORT).show();
                     break;
                 }
 

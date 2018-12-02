@@ -6,7 +6,7 @@
     <string name="wifi_widget_label">Widget-Label</string>
     <string name="ssid_label">Network SSID</string>
     <string name="PREFS_NAME">example.com.wifi_4.WifiConnectorWidget</string>
-    <string name="appwidget_text_title">Select a WiFi to Continue</string>
+    <string name="appwidget_text_title">Select a Network</string>
     <string name="appwidget_text_ssid">ONE-CLICK-SSID</string>
     <string name="modify_color">Color\nPicker</string>
     <string name="widget_default_hex_green">#4EA651</string>

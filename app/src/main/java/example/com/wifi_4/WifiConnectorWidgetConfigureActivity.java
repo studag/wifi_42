@@ -294,6 +294,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
 
         mAppWidgetText_label    = (EditText) findViewById(R.id.appwidget_edittext_widget_title);
 
+
         mAppWidgetText_ssid     = (EditText) findViewById(R.id.appwidget_edittext_ssid_label);
 
         // Purely read only and greyed out
@@ -326,6 +327,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         mAppWidgetText_ssid.setText("Network SSID selected");
 
 
+
         predefinedRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -345,6 +347,9 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
 
                     mAppWidgetText_label.setText(rb_ssid);
                     mAppWidgetText_ssid.setText(rb_ssid);
+
+                    if(mAppWidgetText_label.length()>=18)
+                        Toast.makeText(getApplicationContext(), "Max label length 18 characters", Toast.LENGTH_SHORT).show();
 
                     addWidgetButton.setEnabled(true);
                 }
