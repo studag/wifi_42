@@ -56,7 +56,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
     int radioitemselected = -1;
 
     private static ColorPicker cp;
-    private static int widget_main_color;
+    private static int widget_text_color;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     EditText mAppWidgetText_label;
@@ -69,7 +69,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             cp = new ColorPicker(WifiConnectorWidgetConfigureActivity.this);
             /* Show color picker dialog */
 
-            cp.setColor(widget_main_color);
+            cp.setColor(loadLastSavedColorPref(context));
             cp.show();
 
             cp.enableAutoClose(); // Enable auto-dismiss for the dialog
@@ -79,11 +79,10 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
                 @Override
                 public void onColorChosen(@ColorInt int color) {
                     // Do whatever you want
-                    widget_main_color = color;
-                    Toast.makeText(context, "widget_main_color: " + widget_main_color, Toast.LENGTH_SHORT).show();
+                    widget_text_color = color;
                     // Examples
 
-                    colorPickerButton.setBackgroundColor(color);
+                    colorPickerButton.setTextColor(color);
 
                     Log.d("Alpha", Integer.toString(Color.alpha(color)));
                     Log.d("Red", Integer.toString(Color.red(color)));
@@ -115,7 +114,7 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
             // When the button is clicked, store the string locally
             widgetTextEntered = mAppWidgetText_label.getText().toString();
 
-            saveWidgetColorPref(context,widget_main_color);
+            saveWidgetColorPref(context,mAppWidgetId,widget_text_color);
             saveTitlePref(context, mAppWidgetId, widgetTextEntered);
 
             RadioButton rb = predefinedRadioGroup.findViewById(radioitemselected);
@@ -155,9 +154,16 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         prefs.putString(PREF_PREFIX_KEY + appWidgetId + "_ssid", ssid);
         prefs.apply();
     }
-    static void saveWidgetColorPref(Context context, Integer color) {
+    static void saveWidgetColorPref(Context context,int appWidgetId ,Integer color) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putInt(PREF_PREFIX_KEY + "_widget_main_color", color);
+        prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_widget_text_color", color);
+
+        saveLastSavedColorPref(context,color);
+        prefs.apply();
+    }
+    static void saveLastSavedColorPref(Context context ,Integer color) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putInt(PREF_PREFIX_KEY +"_widget_text_color", color);
         prefs.apply();
     }
 
@@ -185,23 +191,24 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         }
     }
 
-    static List<String> loadSSIDPrefs(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        List <String> ssidValues = (List<String>) prefs.getStringSet(PREF_PREFIX_KEY + "_ssid", null);
-        if (ssidValues != null) {
-            return ssidValues;
-        } else {
-            return null;
-        }
-    }
-
-
-    static Integer loadColorPref(Context context) {
+    static Integer loadColorPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
 
         Log.d("COLORS", "DEFAULT_COLOR_WIDGET: " + DEFAULT_COLOR_WIDGET);
-        int colorValue = prefs.getInt(PREF_PREFIX_KEY  +  "_widget_main_color",  DEFAULT_COLOR_WIDGET);
+        int colorValue = prefs.getInt(PREF_PREFIX_KEY  + appWidgetId +  "_widget_text_color",  DEFAULT_COLOR_WIDGET);
 
+        if (colorValue != 0)
+            return colorValue;
+        else
+
+            return DEFAULT_COLOR_WIDGET;
+    }
+
+    static Integer loadLastSavedColorPref(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+
+        Log.d("COLORS", "DEFAULT_COLOR_WIDGET: " + DEFAULT_COLOR_WIDGET);
+        int colorValue = prefs.getInt(PREF_PREFIX_KEY +"_widget_text_color",  DEFAULT_COLOR_WIDGET);
 
         if (colorValue != 0)
             return colorValue;
@@ -234,12 +241,9 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         colorPickerButton = findViewById(R.id.modify_color);
 
 
-        widget_main_color = loadColorPref(getApplicationContext());
+        widget_text_color = loadLastSavedColorPref(getApplicationContext());
 
-
-        //widget_main_color = 28416;
-        colorPickerButton.setBackgroundColor(widget_main_color);
-
+        colorPickerButton.setTextColor(loadLastSavedColorPref(getApplicationContext()));
 
         addWidgetButton.setEnabled(false);
 

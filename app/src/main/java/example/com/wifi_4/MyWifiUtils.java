@@ -2,7 +2,6 @@ package example.com.wifi_4;
 
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
@@ -18,23 +17,9 @@ import static android.content.Context.WIFI_SERVICE;
 public class MyWifiUtils {
 
 
-    public static boolean isWifiSSIDConnected(Context context, WifiManager wifiManager ,String ssid)
-    {
-        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = wifiManager.getConnectionInfo ();
 
-        String current_connected_SSID  = WifiConnectorWidget.getSsidConnectedNow();
 
-        if(!wifiManager.isWifiEnabled()) {
-            WifiConnectorWidget.setSsidConnectedNow("");
-            return false;
-        }
 
-        if (current_connected_SSID.equals( "\""+ ssid +"\""))
-            return true;
-        else
-            return false;
-    }
 
 
 

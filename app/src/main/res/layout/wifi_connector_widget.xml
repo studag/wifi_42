@@ -2,8 +2,8 @@
 
     android:id="@+id/appwidget_main_body"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/widget_default_green"
+    android:layout_height="100dp"
+    android:background="@drawable/rounded_layout_shape"
     android:padding="@dimen/widget_margin"
     android:orientation="vertical">
     <GridLayout
@@ -18,24 +18,24 @@
             android:layout_marginRight="1dp"
             android:layout_marginBottom="4dp"
             android:src="@drawable/red_off" />
-        <ImageView
-            android:id="@+id/circle_on_off_image_Level_2"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="1dp"
-            android:layout_marginBottom="4dp"
-            android:src="@drawable/red_off" />
-        <ImageView
-            android:id="@+id/circle_on_off_image_Level_3"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="1dp"
-            android:layout_marginBottom="4dp"
-            android:src="@drawable/red_off" />
+        <!--<ImageView-->
+            <!--android:id="@+id/circle_on_off_image_Level_2"-->
+            <!--android:layout_width="20dp"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:layout_marginRight="1dp"-->
+            <!--android:layout_marginBottom="4dp"-->
+            <!--android:src="@drawable/red_off" />-->
+        <!--<ImageView-->
+            <!--android:id="@+id/circle_on_off_image_Level_3"-->
+            <!--android:layout_width="20dp"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:layout_marginRight="1dp"-->
+            <!--android:layout_marginBottom="4dp"-->
+            <!--android:src="@drawable/red_off" />-->
 
     </GridLayout>
     <TextView
@@ -45,14 +45,15 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_margin="8dp"
-        android:background="@color/widget_default_green"
-
+        android:layout_margin="4dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/widget_default_white"
         android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
         android:textColor="#ffffff"
-        android:textSize="20sp"
-        android:textStyle="bold|italic" />
+        android:textSize="14sp"
+        android:textStyle="bold|italic"
+        android:gravity="center" />
 
 
     <!--android:alpha="0.9"-->
@@ -67,3 +68,4 @@
 
 
     <!--android:background="@drawable/layout_bg_widget"todo this can go back in if I can work out shapes and drawables-->
+    <!--android:background="@color/widget_default_green"-->
