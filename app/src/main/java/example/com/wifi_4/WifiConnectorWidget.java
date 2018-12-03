@@ -38,6 +38,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         ssidConnectedNow = ss;
     }
 
+    public static int counter_receivers = 0;
 
     private static int level = 0;
 
@@ -68,6 +69,9 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+        if (!wifiManager.isWifiEnabled())
+            wifiManager.setWifiEnabled(true);
 
         availableSSIDList = getAvailableSSIDList(wifiManager);
 
@@ -117,12 +121,12 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         WifiInfo info = wifiManager.getConnectionInfo ();
 
 
-        String current_connected_SSID  = WifiConnectorWidget.getSsidConnectedNow();
+        String current_connected_SSID ;
         current_connected_SSID = info.getSSID();
 
         Log.d("SSIDDDDD", "current_connected_SSID = " + current_connected_SSID);
         Log.d("SSIDDDDD", "widgetSSID = " + widgetSSID);
-        boolean result = false;
+        boolean result ;
 
         if(!wifiManager.isWifiEnabled()) {
             WifiConnectorWidget.setSsidConnectedNow("");
@@ -201,6 +205,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them.
+
         for (int appWidgetId : appWidgetIds) {
 
             updateAppWidget(context, appWidgetManager, appWidgetId);
@@ -228,7 +233,15 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filters.addAction(WifiManager.EXTRA_WIFI_STATE);
 
-        context.getApplicationContext().registerReceiver(wifiStateReceiver, filters);
+        try
+        {
+            context.getApplicationContext().registerReceiver(wifiStateReceiver, filters);
+            counter_receivers += 1;
+            Toast.makeText(context, "Receiver count: "+ counter_receivers, Toast.LENGTH_SHORT).show();
+        }catch(Exception e)
+        {
+            Toast.makeText(context, "Receiver could not be started", Toast.LENGTH_SHORT).show();
+        }
 
         //Toast.makeText(context, "Receiver Registered", Toast.LENGTH_SHORT).show();
 
@@ -240,6 +253,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
         try {
             context.getApplicationContext().unregisterReceiver(wifiStateReceiver);
+            counter_receivers -= 1;
         }catch(IllegalArgumentException e)
         {
             //do nothing
@@ -262,20 +276,20 @@ public class WifiConnectorWidget extends AppWidgetProvider {
             Log.d(MY_TAG, "SSID to connect to: " + _ssid);
 
             wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            wifiManager.disableNetwork(wifiManager.getConnectionInfo().getNetworkId());
+            //wifiManager.disableNetwork(wifiManager.getConnectionInfo().getNetworkId());
 
             int netId;
+
+            if (!wifiManager.isWifiEnabled())
+                wifiManager.setWifiEnabled(true);
 
             for (WifiConfiguration tmp : wifiManager.getConfiguredNetworks())
                 if (tmp.SSID.equals("\"" + _ssid + "\"")) {
 
                     netId = tmp.networkId;
 
-                    if (wifiManager.setWifiEnabled(false))
-                    {
-                        wifiManager.setWifiEnabled(true);
-                    }
-
+//                    if (!wifiManager.isWifiEnabled())
+//                        wifiManager.setWifiEnabled(true);
 
                     wifiManager.enableNetwork(netId, true);
 

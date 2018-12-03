@@ -27,7 +27,7 @@ public class MyWifiUtils {
     {
         MyWifiUtils.logList("DAGGERS: removeDoubleQuotesFromSSIDs: ", originalList);
 
-        List<String> toReturn = new ArrayList<String>();
+        List<String> toReturn = new ArrayList<>();
 
         for (int i=0; i<= originalList.size() -1 ; i++)
         {
@@ -81,12 +81,13 @@ public class MyWifiUtils {
         WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
 
         int netId;
+        if(!wifiManager.isWifiEnabled())
+            wifiManager.setWifiEnabled(true);
 
         for (WifiConfiguration tmp : wifiManager.getConfiguredNetworks())
             if (tmp.SSID.equals( "\""+ ssid +"\""))
             {
-                if(wifiManager.setWifiEnabled(false))
-                    wifiManager.setWifiEnabled(true);
+
 
                 netId = tmp.networkId;
                 wifiManager.enableNetwork(netId, true);

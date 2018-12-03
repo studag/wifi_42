@@ -120,15 +120,17 @@ public class MainActivity extends AppCompatActivity {
 
             private void connectToWifi(String ssid) {
 
-                WifiManager wifiManager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
-                int netId = -1;
+//                WifiManager wifiManager = (WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
+                int netId ;
 
+                if(!wifiManager.isWifiEnabled())
+                    wifiManager.setWifiEnabled(true);
 
                 for (WifiConfiguration tmp : wifiManager.getConfiguredNetworks())
                     if (tmp.SSID.equals( "\""+ ssid +"\""))
                     {
                         Toast.makeText(MainActivity.this, "Connecting..." + ssid, Toast.LENGTH_SHORT).show();
-                        if(wifiManager.setWifiEnabled(false))
+                        if(!wifiManager.isWifiEnabled())
                             wifiManager.setWifiEnabled(true);
 
                         netId = tmp.networkId;
@@ -235,6 +237,9 @@ public class MainActivity extends AppCompatActivity {
     };
     private void populateConfiguredNetworksList()
     {
+
+        if(!wifiManager.isWifiEnabled())
+            wifiManager.setWifiEnabled(true);
 
         configuredNetworkList =  wifiManager.getConfiguredNetworks();
 
