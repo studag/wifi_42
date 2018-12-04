@@ -70,7 +70,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
-        if (!wifiManager.isWifiEnabled())
+        if (!wifiManager.isWifiEnabled())//fixme This needs an else statement to block it simply turning on wifi on every update.
             wifiManager.setWifiEnabled(true);
 
         availableSSIDList = getAvailableSSIDList(wifiManager);
@@ -120,12 +120,9 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo ();
 
-
         String current_connected_SSID ;
         current_connected_SSID = info.getSSID();
 
-        Log.d("SSIDDDDD", "current_connected_SSID = " + current_connected_SSID);
-        Log.d("SSIDDDDD", "widgetSSID = " + widgetSSID);
         boolean result ;
 
         if(!wifiManager.isWifiEnabled()) {
@@ -159,7 +156,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
             }
         }
         else {
-            views.setImageViewBitmap(R.id.circle_on_off_image_Level_1, bmp_color_image_red);
+            views.setImageViewBitmap(R.id.circle_on_off_image_Level_1, bmp_color_image_gray);
 
 //            for (String avail_list_item : availableSSIDList) {
 //                Log.d("SSIDDDDD", "avail_list_item = " + avail_list_item);
