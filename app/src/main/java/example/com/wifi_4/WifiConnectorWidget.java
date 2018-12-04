@@ -68,128 +68,70 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.wifi_connector_widget);
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
-        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-
-        if (!wifiManager.isWifiEnabled())//fixme This needs an else statement to block it simply turning on wifi on every update.
-            wifiManager.setWifiEnabled(true);
-
-        availableSSIDList = getAvailableSSIDList(wifiManager);
-
         bmp_color_image_green = BitmapFactory.decodeResource(context.getResources(), R.drawable.green_on);
         bmp_color_image_gray = BitmapFactory.decodeResource(context.getResources(), R.drawable.gray_circle);
         bmp_color_image_red = BitmapFactory.decodeResource(context.getResources(), R.drawable.red_off);
         bmp_color_image_weak_signal_green = BitmapFactory.decodeResource(context.getResources(), R.drawable.weak_signal);
 
-        //todo :Get list of available ssids
-        //todo : compare to individiual widget ssid
-        //todo : if match - set color grey
-        //todo :  if connected set level to define color
-//
-//
-//        for (String avail_list_item: availableSSIDList)
-//        {
-//            if (widgetSSID.equals(avail_list_item) && isWifiSSIDConnected(context,wifiManager, widgetSSID))
-//            {
-//                switch (level) {
-//                    case 3:
-//                        views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_green);
-//                        break;
-//                    case 2:
-//                        views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_weak_signal_green);
-//                        break;
-//                    case 1:
-//                        views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_weak_signal_green);
-//                        break;
-//                    case 0:
-//                        views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_red);
-//                        break;
-//                }
-//                break;
-//            }
-//            else if(widgetSSID.equals(avail_list_item) && !isWifiSSIDConnected(context,wifiManager, widgetSSID))
-//            {
-//                views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_gray);
-//            }
-//            else
-//            {
-//                views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_red);
-//            }
-//        }
-
-
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = wifiManager.getConnectionInfo ();
 
-        String current_connected_SSID ;
-        current_connected_SSID = info.getSSID();
-
-        boolean result ;
-
-        if(!wifiManager.isWifiEnabled()) {
-            WifiConnectorWidget.setSsidConnectedNow("");
-            result = false;
-        }
-
-        if (current_connected_SSID.equals( "\""+ widgetSSID +"\""))
-            result = true;
-        else
-            result = false;
-
-
-        // If Connected do one thing...
-        if(result)
+        if (wifiManager.isWifiEnabled())// If wifi is on, we can do wifi getters
         {
 
-            switch (level) {
-                case 3:
-                    views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_green);
-                    break;
-                case 2:
-                    views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_weak_signal_green);
-                    break;
-                case 1:
-                    views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_weak_signal_green);
-                    break;
-                case 0:
-                   // views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_red);
-                    break;
+
+            WifiInfo info = wifiManager.getConnectionInfo ();
+
+            availableSSIDList = getAvailableSSIDList(wifiManager);
+
+            String current_connected_SSID ;
+            current_connected_SSID = info.getSSID();
+
+            boolean result;
+
+            if (current_connected_SSID.equals( "\""+ widgetSSID +"\""))
+                result = true;
+            else
+                result = false;
+
+            // If Connected do one thing...
+            if(result)
+            {
+                switch (level) {
+                    case 3:
+                        views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_green);
+                        break;
+                    case 2:
+                        views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_weak_signal_green);
+                        break;
+                    case 1:
+                        views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_weak_signal_green);
+                        break;
+                    case 0:
+                        // views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_red);
+                        break;
+                }
             }
-        }
-        else {
-            views.setImageViewBitmap(R.id.circle_on_off_image_Level_1, bmp_color_image_gray);
-
-//            for (String avail_list_item : availableSSIDList) {
-//                Log.d("SSIDDDDD", "avail_list_item = " + avail_list_item);
-//                if (widgetSSID.equals(avail_list_item)) {
-//                    views.setImageViewBitmap(R.id.circle_on_off_image_Level_1, bmp_color_image_gray);
-//                    break;
-//                }
-//            }
 
         }
-
+        else
+        {
+            views.setImageViewBitmap(R.id.circle_on_off_image_Level_1, bmp_color_image_red);
+        }
 
         int color = WifiConnectorWidgetConfigureActivity.loadColorPref(context,appWidgetId);//todo. chnage this for individual appIds. currently just loads all one color. Have separate DEFAULT color preference
 
-        //views.setInt(R.id.appwidget_main_body, "setBackgroundColor", color);
-        //views.setInt(R.id.appwidget_main_body, "setBackgroundColor", R.drawable.rounded_layout_shape);
         views.setInt(R.id.appwidget_text, "setBackgroundColor", Color.TRANSPARENT);
         views.setInt(R.id.appwidget_text, "setTextColor", color);
 
         Intent intent = new Intent(context, WifiConnectorWidget.class);
-//        Intent intent = new Intent(context,ConnectWifiService.class);
 
-        //intent.putExtra("ssid", widgetText.toString());
         intent.putExtra("appWidgetID", appWidgetId);
 
         Log.d("TAGGGGGGGG", widgetText.toString());
         intent.setAction(WIDGET_CLICKED_ACTION);
 
-//        PendingIntent pendingIntent = PendingIntent.getService(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, 0);
 
-        //views.setOnClickPendingIntent(R.id.appwidget_button, pendingIntent);
-        //views.setOnClickPendingIntent(R.id.appwidget_text, pendingIntent);
         views.setOnClickPendingIntent(R.id.appwidget_main_body, pendingIntent);
 
         // Instruct the widget manager to update the widget
