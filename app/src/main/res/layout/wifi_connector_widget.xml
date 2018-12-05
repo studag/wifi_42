@@ -2,7 +2,7 @@
 
     android:id="@+id/appwidget_main_body"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="90dp"
     android:background="@drawable/rounded_layout_shape"
     android:padding="@dimen/widget_margin"
     android:orientation="vertical">
@@ -15,8 +15,8 @@
             android:id="@+id/circle_on_off_image_Level_1"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="7dp"
             android:layout_marginRight="1dp"
             android:layout_marginBottom="4dp"
             android:src="@drawable/gray_circle" />

@@ -5,5 +5,6 @@
     <color name="colorAccent">#1a279d</color>
     <color name="accent_device_default_light">#8e6c03</color>
     <color name="widget_default_green">#D94EA651</color>
+    <color name="widget_default_green_darker">#d90c580d</color>
     <color name="widget_default_white">#E6FFFFFF</color>
 </resources>
