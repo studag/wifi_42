@@ -3,11 +3,9 @@ package example.com.wifi_4;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -38,8 +36,6 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         ssidConnectedNow = ss;
     }
 
-    public static int counter_receivers = 0;
-
     private static int level = 0;
 
     private static String WIDGET_CLICKED_ACTION = "wifiaction";
@@ -51,8 +47,9 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
     private static List<String> availableSSIDList;
 
-
     private static final String MY_TAG = "WIFI_SERVICE";
+
+    private static boolean serviceRunning = false;
 
     private static Bitmap bmp_color_image_green;
     private static Bitmap bmp_color_image_gray;
@@ -77,8 +74,6 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         if (wifiManager.isWifiEnabled())// If wifi is on, we can do wifi getters
         {
-
-
             WifiInfo info = wifiManager.getConnectionInfo ();
 
             availableSSIDList = getAvailableSSIDList(wifiManager);
@@ -93,9 +88,14 @@ public class WifiConnectorWidget extends AppWidgetProvider {
             else
                 result = false;
 
+            views.setImageViewBitmap(R.id.circle_on_off_image_Level_1, bmp_color_image_gray);
+
             // If Connected do one thing...
             if(result)
             {
+                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
+
                 switch (level) {
                     case 3:
                         views.setImageViewBitmap(R.id.circle_on_off_image_Level_1,bmp_color_image_green);
@@ -132,17 +132,32 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, 0);
 
+
         views.setOnClickPendingIntent(R.id.appwidget_main_body, pendingIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
+    public static void updateMePlease() {
+
+    }
+
+    public static void updateAppWidgetFromService(Context context, AppWidgetManager appWidgetManager) {
+
+        appWidgetManager = AppWidgetManager.getInstance(context);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WifiConnectorWidget.class));
+
+        for (int appWidgetId : appWidgetIds) {
+
+            updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
+    }
 
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
-                         int[] appWidgetIds) {
+                                int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them.
 
         for (int appWidgetId : appWidgetIds) {
@@ -164,23 +179,32 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
 
-        IntentFilter filters = new IntentFilter();
-        filters.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        filters.addAction("android.net.wifi.STATE_CHANGE");
-        filters.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
-        filters.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        filters.addAction(WifiManager.EXTRA_WIFI_STATE);
+        Intent serviceIntent = new Intent(context, CheckStateForever.class);
 
-        try
-        {
-            context.getApplicationContext().registerReceiver(wifiStateReceiver, filters);
-            counter_receivers += 1;
-            Toast.makeText(context, "Receiver count: "+ counter_receivers, Toast.LENGTH_SHORT).show();
-        }catch(Exception e)
-        {
-            Toast.makeText(context, "Receiver could not be started", Toast.LENGTH_SHORT).show();
+        if(serviceRunning) {
+            context.stopService(serviceIntent);
+            Toast.makeText(context, "serviceStopped", Toast.LENGTH_SHORT).show();
+
+        } else {
+            context.startService(serviceIntent);
+            Toast.makeText(context, "service Started", Toast.LENGTH_SHORT).show();
+
         }
+//        IntentFilter filters = new IntentFilter();
+//        filters.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+//        filters.addAction("android.net.wifi.STATE_CHANGE");
+//        filters.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
+//        filters.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+//        filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+//        filters.addAction(WifiManager.EXTRA_WIFI_STATE);
+//
+//        try
+//        {
+//            context.getApplicationContext().registerReceiver(wifiStateReceiver, filters);
+//        }catch(Exception e)
+//        {
+//            Toast.makeText(context, "Receiver could not be started", Toast.LENGTH_SHORT).show();
+//        }
 
         //Toast.makeText(context, "Receiver Registered", Toast.LENGTH_SHORT).show();
 
@@ -191,8 +215,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
         try {
-            context.getApplicationContext().unregisterReceiver(wifiStateReceiver);
-            counter_receivers -= 1;
+//            context.getApplicationContext().unregisterReceiver(CheckStateForever);
         }catch(IllegalArgumentException e)
         {
             //do nothing
@@ -227,14 +250,11 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
                     netId = tmp.networkId;
 
-//                    if (!wifiManager.isWifiEnabled())
-//                        wifiManager.setWifiEnabled(true);
+                    if(wifiManager.enableNetwork(netId, true)) {
+                        Toast.makeText(context, "Connecting to:\n" + _ssid, Toast.LENGTH_SHORT).show();
 
-                    wifiManager.enableNetwork(netId, true);
-
-                    //Toast.makeText(context, _ssid + "\nappID=" + appId, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(context, "Connecting to:\n"+ _ssid, Toast.LENGTH_SHORT).show();
-                    break;
+                        break;
+                    }
                 }
 
         }
@@ -245,42 +265,42 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
 }
 
-    private BroadcastReceiver wifiStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int wifiStateExtra = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
-            final String action = intent.getAction();
-
-            wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WifiConnectorWidget.class));
-            setSsidConnectedNow(wifiManager.getConnectionInfo().getSSID());
-
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-            level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
-
-            if (action.equals("android.net.wifi.STATE_CHANGE")) {
-                // save the connected state to get in onUpdate
-                onUpdate(context, appWidgetManager, appWidgetIds);
-
-            }
-
-            switch (wifiStateExtra) {
-
-                case WifiManager.WIFI_STATE_ENABLED:
-                    Toast.makeText(context, "Wifi Enabled", Toast.LENGTH_SHORT).show();
-                    onUpdate(context, appWidgetManager, appWidgetIds);
-                    break;
-
-                case WifiManager.WIFI_STATE_DISABLED:
-                    Toast.makeText(context, "Wifi disabled", Toast.LENGTH_SHORT).show();
-                    setSsidConnectedNow(wifiManager.getConnectionInfo().getSSID());
-                    onUpdate(context, appWidgetManager, appWidgetIds);
-                    break;
-            }
-        }
-    };
+//    private BroadcastReceiver wifiStateReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            int wifiStateExtra = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
+//            final String action = intent.getAction();
+//
+//            wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+//
+//            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+//            int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WifiConnectorWidget.class));
+//            setSsidConnectedNow(wifiManager.getConnectionInfo().getSSID());
+//
+//            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+//            level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
+//
+//
+//            switch (wifiStateExtra) {
+//
+//                case WifiManager.WIFI_STATE_ENABLED:
+//                    Toast.makeText(context, "Wifi Enabled", Toast.LENGTH_SHORT).show();
+//                    onUpdate(context, appWidgetManager, appWidgetIds);
+//                    break;
+//
+//                case WifiManager.WIFI_STATE_DISABLED:
+//                    Toast.makeText(context, "Wifi disabled", Toast.LENGTH_SHORT).show();
+//                    onUpdate(context, appWidgetManager, appWidgetIds);
+//                    break;
+//            }
+//            //            if (action.equals("android.net.wifi.STATE_CHANGE")) {
+//            if (action.equals("android.net.wifi.STATE_CHANGE")) {
+//                // save the connected state to get in onUpdate
+//                onUpdate(context, appWidgetManager, appWidgetIds);
+//
+//            }
+//        }
+//    };
 
     public static List<String> getAvailableSSIDList(WifiManager wifiManager)
     {

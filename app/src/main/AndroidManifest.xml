@@ -45,6 +45,10 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".CheckStateForever"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
