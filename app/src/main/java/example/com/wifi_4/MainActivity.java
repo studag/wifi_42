@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
         configuredNetworkList =  wifiManager.getConfiguredNetworks();
 
-        ArrayList<String> unsorted_SSIDs = new ArrayList<String>();
+        ArrayList<String> unsorted_SSIDs = new ArrayList<>();
 
         for (int i=0; i<= configuredNetworkList.size() -1 ; i++) {
 

@@ -83,10 +83,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
             boolean result;
 
-            if (current_connected_SSID.equals( "\""+ widgetSSID +"\""))
-                result = true;
-            else
-                result = false;
+            result = current_connected_SSID.equals("\"" + widgetSSID + "\"");
 
             views.setImageViewBitmap(R.id.circle_on_off_image_Level_1, bmp_color_image_gray);
 
@@ -139,9 +136,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    public static void updateMePlease() {
 
-    }
 
     public static void updateAppWidgetFromService(Context context, AppWidgetManager appWidgetManager) {
 
@@ -214,12 +209,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
-        try {
-//            context.getApplicationContext().unregisterReceiver(CheckStateForever);
-        }catch(IllegalArgumentException e)
-        {
-            //do nothing
-        }
+
     }
 
 
@@ -334,10 +324,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
             return false;
         }
 
-        if (current_connected_SSID.equals( "\""+ ssid +"\""))
-            return true;
-        else
-            return false;
+        return current_connected_SSID.equals("\"" + ssid + "\"");
     }
 
     public static List<String> sortByAlphaAndRemoveBlanksAndDuplicates(List<String> listOfStrings)
@@ -352,8 +339,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
             }
         }
 
-        Set<String> removeDuplicates_set = new HashSet<>();
-        removeDuplicates_set.addAll(listOfStrings);
+        Set<String> removeDuplicates_set = new HashSet<>(listOfStrings);
 
         listOfStrings.clear();
         listOfStrings.addAll(removeDuplicates_set);

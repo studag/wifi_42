@@ -56,8 +56,7 @@ public class MyWifiUtils {
             }
         }
 
-        Set<String> removeDuplicates_set = new HashSet<>();
-        removeDuplicates_set.addAll(listOfStrings);
+        Set<String> removeDuplicates_set = new HashSet<>(listOfStrings);
 
         listOfStrings.clear();
         listOfStrings.addAll(removeDuplicates_set);
