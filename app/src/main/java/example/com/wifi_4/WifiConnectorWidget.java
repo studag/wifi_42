@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 public class WifiConnectorWidget extends AppWidgetProvider {
 
+    private boolean connection ;
     private static String ssidConnectedNow = "";
 
     public static String getSsidConnectedNow() {
@@ -55,6 +57,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     private static Bitmap bmp_color_image_gray;
     private static Bitmap bmp_color_image_red;
     private static Bitmap bmp_color_image_weak_signal_green;
+
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -127,8 +130,8 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         Log.d("TAGGGGGGGG", widgetText.toString());
         intent.setAction(WIDGET_CLICKED_ACTION);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, 0);
-
+        //PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, 0);FLAG_ONE_SHOT
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         views.setOnClickPendingIntent(R.id.appwidget_main_body, pendingIntent);
 
@@ -176,6 +179,14 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         Intent serviceIntent = new Intent(context, CheckStateForeverService.class);
 
+        IntentFilter filters = new IntentFilter();
+        filters.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        filters.addAction("android.net.wifi.STATE_CHANGE");
+        filters.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
+        filters.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filters.addAction(WifiManager.EXTRA_WIFI_STATE);
+
         if(serviceRunning) {
             context.stopService(serviceIntent);
             Toast.makeText(context, "serviceStopped", Toast.LENGTH_SHORT).show();
@@ -183,27 +194,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         } else {
             context.startService(serviceIntent);
             Toast.makeText(context, "service Started", Toast.LENGTH_SHORT).show();
-
         }
-//        IntentFilter filters = new IntentFilter();
-//        filters.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-//        filters.addAction("android.net.wifi.STATE_CHANGE");
-//        filters.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
-//        filters.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-//        filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-//        filters.addAction(WifiManager.EXTRA_WIFI_STATE);
-//
-//        try
-//        {
-//            context.getApplicationContext().registerReceiver(wifiStateReceiver, filters);
-//        }catch(Exception e)
-//        {
-//            Toast.makeText(context, "Receiver could not be started", Toast.LENGTH_SHORT).show();
-//        }
-
-        //Toast.makeText(context, "Receiver Registered", Toast.LENGTH_SHORT).show();
-
-        //WifiConnectorWidgetConfigureActivity.saveWidgetColorPref(context,WifiConnectorWidgetConfigureActivity.getDefaultWidgetColor());
     }
 
     @Override
@@ -215,9 +206,20 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
+        //super.onReceive(context, intent);
 
         final String action = intent.getAction();
+        if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
+            // save the connected state to get in onUpdate
+             connection = intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false);
+
+            // update all widgets
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WifiConnectorWidget.class));
+            onUpdate(context, appWidgetManager, appWidgetIds);
+        } else {
+            super.onReceive(context, intent);
+        }
 
         if (action.equals(WIDGET_CLICKED_ACTION)) {
 
@@ -326,6 +328,8 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         return current_connected_SSID.equals("\"" + ssid + "\"");
     }
+
+
 
     public static List<String> sortByAlphaAndRemoveBlanksAndDuplicates(List<String> listOfStrings)
     {

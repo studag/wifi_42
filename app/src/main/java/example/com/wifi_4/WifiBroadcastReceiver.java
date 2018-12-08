@@ -19,6 +19,7 @@ public class WifiBroadcastReceiver  extends BroadcastReceiver {
             WifiConnectorWidget.updateAppWidgetFromService(context,appWidgetManager);
             //onUpdate(context, appWidgetManager, appWidgetIds);
 
+
         }
     }
 
