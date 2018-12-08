@@ -174,7 +174,7 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
 
-        Intent serviceIntent = new Intent(context, CheckStateForever.class);
+        Intent serviceIntent = new Intent(context, CheckStateForeverService.class);
 
         if(serviceRunning) {
             context.stopService(serviceIntent);

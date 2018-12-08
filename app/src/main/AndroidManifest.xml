@@ -46,7 +46,7 @@
         </activity>
 
         <service
-            android:name=".CheckStateForever"
+            android:name=".CheckStateForeverService"
             android:enabled="true"
             android:exported="true"></service>
     </application>
