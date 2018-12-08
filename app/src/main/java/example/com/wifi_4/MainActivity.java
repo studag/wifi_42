@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_WIFI = "WIFI DEBUG";
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -292,6 +291,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 //    private void populateAvailableNetworksList()
 //    {

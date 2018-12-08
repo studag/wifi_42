@@ -1,5 +1,6 @@
 package example.com.wifi_4;
 
+import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -173,6 +174,18 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         }
     }
 
+    private boolean isMyServiceRunning(Class<?> serviceClass,Context context) {
+        ActivityManager manager = (ActivityManager)context. getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i("Service already","running");
+                return true;
+            }
+        }
+        Log.i("Service not","running");
+        return false;
+    }
+
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
@@ -187,21 +200,32 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filters.addAction(WifiManager.EXTRA_WIFI_STATE);
 
+
+        serviceRunning = isMyServiceRunning(CheckStateForeverService.class, context);
+
         if(serviceRunning) {
             context.stopService(serviceIntent);
-            Toast.makeText(context, "serviceStopped", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "onEnabled: service running...do nothing", Toast.LENGTH_SHORT).show();
 
         } else {
             context.startService(serviceIntent);
-            Toast.makeText(context, "service Started", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "onEnabled: service NOT running...starting service ", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+        Intent serviceIntent = new Intent(context, CheckStateForeverService.class);
 
-    }
+        serviceRunning = isMyServiceRunning(CheckStateForeverService.class, context);
+
+        if (serviceRunning)
+        {
+            context.stopService(serviceIntent);
+            Toast.makeText(context, "onDisabled: Stopping Service", Toast.LENGTH_SHORT).show();
+        }else
+            Toast.makeText(context, "onDisabled: No service running", Toast.LENGTH_SHORT).show();    }
 
 
     @Override
