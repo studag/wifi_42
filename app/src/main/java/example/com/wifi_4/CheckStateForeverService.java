@@ -2,6 +2,7 @@ package example.com.wifi_4;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
@@ -17,8 +18,10 @@ public class CheckStateForeverService extends Service {
         IntentFilter filters = new IntentFilter();
         filters.addAction("android.net.wifi.STATE_CHANGE");
 
+
         receiver = new WifiBroadcastReceiver();
         registerReceiver(receiver,filters);
+        this.registerReceiver(receiver,filters);
     }
 
     @Override
@@ -28,13 +31,14 @@ public class CheckStateForeverService extends Service {
         restartService.setPackage(getPackageName());
         PendingIntent restartServicePI = PendingIntent.getService(
                 getApplicationContext(), 1, restartService,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //return super.onStartCommand(intent, flags, startId);
-        return START_STICKY;
+//        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -54,4 +58,13 @@ public class CheckStateForeverService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    @Override
+    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+
+//        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+//        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(), WifiConnectorWidget.class));
+//        WifiConnectorWidget.updateAppWidgetFromService(getApplicationContext(),appWidgetManager);
+
+        return super.registerReceiver(receiver, filter);
+    }
 }

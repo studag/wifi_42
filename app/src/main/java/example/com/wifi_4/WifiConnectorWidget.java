@@ -7,10 +7,11 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
@@ -42,7 +43,6 @@ public class WifiConnectorWidget extends AppWidgetProvider {
     private static int level = 0;
 
     private static String WIDGET_CLICKED_ACTION = "wifiaction";
-
     private static int enabledSSIDWidget = 0;
 
     static WifiManager wifiManager;
@@ -128,14 +128,12 @@ public class WifiConnectorWidget extends AppWidgetProvider {
 
         intent.putExtra("appWidgetID", appWidgetId);
 
-        Log.d("TAGGGGGGGG", widgetText.toString());
         intent.setAction(WIDGET_CLICKED_ACTION);
 
         //PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, 0);FLAG_ONE_SHOT
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         views.setOnClickPendingIntent(R.id.appwidget_main_body, pendingIntent);
-
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -178,27 +176,30 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         ActivityManager manager = (ActivityManager)context. getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.i("Service already","running");
                 return true;
             }
         }
-        Log.i("Service not","running");
         return false;
     }
 
     @Override
     public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
+//        // Enter relevant functionality for when the first widget is created
+//
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+//        context.getApplicationContext().registerReceiver(this, intentFilter);
 
         Intent serviceIntent = new Intent(context, CheckStateForeverService.class);
 
-        IntentFilter filters = new IntentFilter();
-        filters.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-        filters.addAction("android.net.wifi.STATE_CHANGE");
-        filters.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
-        filters.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        filters.addAction(WifiManager.EXTRA_WIFI_STATE);
+
+//        IntentFilter filters = new IntentFilter();
+//        filters.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+//        filters.addAction("android.net.wifi.STATE_CHANGE");
+//        filters.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
+//        filters.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+//        filters.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+//        filters.addAction(WifiManager.EXTRA_WIFI_STATE);
 
 
         serviceRunning = isMyServiceRunning(CheckStateForeverService.class, context);
@@ -225,7 +226,8 @@ public class WifiConnectorWidget extends AppWidgetProvider {
             context.stopService(serviceIntent);
             Toast.makeText(context, "onDisabled: Stopping Service", Toast.LENGTH_SHORT).show();
         }else
-            Toast.makeText(context, "onDisabled: No service running", Toast.LENGTH_SHORT).show();    }
+            Toast.makeText(context, "onDisabled: No service running", Toast.LENGTH_SHORT).show();
+    }
 
 
     @Override
@@ -233,19 +235,22 @@ public class WifiConnectorWidget extends AppWidgetProvider {
         //super.onReceive(context, intent);
 
         final String action = intent.getAction();
-        if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
+
+        if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
             // save the connected state to get in onUpdate
              connection = intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false);
 
-            // update all widgets
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WifiConnectorWidget.class));
-            onUpdate(context, appWidgetManager, appWidgetIds);
-        } else {
-            super.onReceive(context, intent);
-        }
+            NetworkInfo netInfo = intent.getParcelableExtra (WifiManager.EXTRA_NETWORK_INFO);
+            if (ConnectivityManager.TYPE_WIFI == netInfo.getType ()) {
+                // update all widgets
+                wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
-        if (action.equals(WIDGET_CLICKED_ACTION)) {
+//                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+//                int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WifiConnectorWidget.class));
+//                onUpdate(context, appWidgetManager, appWidgetIds);
+            }
+        }
+        else if (action.equals(WIDGET_CLICKED_ACTION)) {
 
             int appId = intent.getIntExtra("appWidgetID", 0);
 
@@ -254,7 +259,6 @@ public class WifiConnectorWidget extends AppWidgetProvider {
             Log.d(MY_TAG, "SSID to connect to: " + _ssid);
 
             wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            //wifiManager.disableNetwork(wifiManager.getConnectionInfo().getNetworkId());
 
             int netId;
 
@@ -273,6 +277,9 @@ public class WifiConnectorWidget extends AppWidgetProvider {
                     }
                 }
 
+        }
+        else {
+            super.onReceive(context, intent);
         }
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);

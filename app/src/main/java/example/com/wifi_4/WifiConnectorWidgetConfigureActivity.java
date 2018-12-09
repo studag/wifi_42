@@ -80,23 +80,8 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
                 public void onColorChosen(@ColorInt int color) {
                     // Do whatever you want
                     widget_text_color = color;
-                    // Examples
 
                     colorPickerButton.setTextColor(color);
-
-                    Log.d("Alpha", Integer.toString(Color.alpha(color)));
-                    Log.d("Red", Integer.toString(Color.red(color)));
-                    Log.d("Green", Integer.toString(Color.green(color)));
-                    Log.d("Blue", Integer.toString(Color.blue(color)));
-
-                    Log.d("Pure Hex", Integer.toHexString(color));
-                    Log.d("#Hex no alpha", String.format("#%06X", (0xFFFFFF & color)));
-                    Log.d("#Hex with alpha", String.format("#%08X", (0xFFFFFFFF & color)));
-
-
-                    //saveWidgetColorPref(context,color);
-                    // If the auto-dismiss option is not enable (disabled as default) you have to manually dimiss the dialog
-                    // cp.dismiss();
                 }
 
 
@@ -213,7 +198,6 @@ public class WifiConnectorWidgetConfigureActivity extends Activity {
         if (colorValue != 0)
             return colorValue;
         else
-
             return DEFAULT_COLOR_WIDGET;
     }
 
